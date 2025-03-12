@@ -83,6 +83,17 @@ begin
         assert zero = '1'
             report "SUB Case 2 Failed: Expected zero flag '1'" severity error;
 
+        -- Test Case 3: 55 - AA (absolute value subtraction)
+        -- 0x55 - 0xAA = -0x55, whose absolute value is 0x55.
+        A <= X"00000055";
+        B <= X"000000AA";
+        ALU_control <= "001";  -- SUB (absolute value expected)
+        wait for 10 ns;
+        assert result = X"00000055"
+            report "SUB Case 3 Failed: Expected 0x00000055 (absolute difference of 55 - AA)" severity error;
+        assert zero = '0'
+            report "SUB Case 3 Failed: Expected zero flag '0'" severity error;
+
         -----------------------------------------------------------------
         -- AND Operation (ALU_control = "010")
         -----------------------------------------------------------------

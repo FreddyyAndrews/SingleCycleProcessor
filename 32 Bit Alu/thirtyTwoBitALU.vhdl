@@ -40,6 +40,16 @@ ARCHITECTURE Structural OF thirtyTwoBitALU IS
         );
     END component;
 
+    component sorter32 IS
+        PORT(
+            A : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+            B : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+            enable : IN STD_LOGIC;
+            C : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+            D : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
+        );
+    END component;
+
     signal and_result : STD_LOGIC_VECTOR(31 DOWNTO 0);
     signal or_result : STD_LOGIC_VECTOR(31 DOWNTO 0);
     signal mathematical_result : STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -52,6 +62,7 @@ ARCHITECTURE Structural OF thirtyTwoBitALU IS
     signal final: STD_LOGIC_VECTOR(31 DOWNTO 0);
     signal not_zero : STD_LOGIC;
     signal top_level_sel : STD_LOGIC;
+    signal arithmetic_a, arithmetic_b : STD_LOGIC_VECTOR(31 DOWNTO 0);
 
 BEGIN
 
@@ -72,9 +83,17 @@ BEGIN
 
     to_sub_or_not_to_sub <= ALU_control(0) or ALU_control(2);  -- subbing for sub and set less than
 
-    arithmetic_unit: thirtyTwoBitCLA PORT MAP(
+    sorting: sorter32 PORT MAP(
         A => A,
         B => B,
+        enable => ALU_control(0),
+        C => arithmetic_a,
+        D => arithmetic_b
+    );
+
+    arithmetic_unit: thirtyTwoBitCLA PORT MAP(
+        A => arithmetic_a,
+        B => arithmetic_b,
         sub => to_sub_or_not_to_sub,
         sum => mathematical_result,
         cout => open
